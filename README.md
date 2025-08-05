@@ -1,4 +1,4 @@
-<h1 align="center">🤖 SHANKAR BOT 🤖</h1>
+<h1 align="center">🤖 SHANKAR BOT-V1 🤖</h1>
 
 <p align="center">
   🚀 Powerful Facebook Chatbot | 🌐 Deploy Anywhere | 🔒 Secure Appstate Login
@@ -6,8 +6,8 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Language-Node.js-brightgreen?style=flat-square" />
-  <img src="https://img.shields.io/github/stars/SHANKAR-PROJECT/fca-shankar-bot?style=flat-square" />
-  <img src="https://img.shields.io/github/forks/SHANKAR-PROJECT/fca-shankar-bot?style=flat-square" />
+  <img src="https://img.shields.io/github/stars/SHANKAR-SINGHANIYA/SHANKAR-BOT-V1?style=flat-square" />
+  <img src="https://img.shields.io/github/forks/SHANKAR-SINGHANIYA/SHANKAR-BOT-V1?style=flat-square" />
 </p>
 
 ---
@@ -18,7 +18,7 @@ Deploy your bot to any free cloud hosting with one click:
 
 ### 🧩 Koyeb
 
-[![Deploy with Koyeb](https://www.koyeb.com/static/images/deploy/button.svg)](https://app.koyeb.com/deploy?type=git&repository=https://github.com/SHANKAR-PROJECT/fca-shankar-bot)
+[![Deploy with Koyeb](https://www.koyeb.com/static/images/deploy/button.svg)](https://app.koyeb.com/deploy?type=git&repository=https://github.com/SHANKAR-SINGHANIYA/SHANKAR-BOT-V1)
 
 ```
 📦 Build Command: npm install
@@ -34,7 +34,7 @@ Deploy your bot to any free cloud hosting with one click:
 
 ### ☁️ Render
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/SHANKAR-PROJECT/fca-shankar-bot)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/SHANKAR-SINGHANIYA/SHANKAR-BOT-V1)
 
 ```
 📦 Build Command: npm install
@@ -49,7 +49,7 @@ Deploy your bot to any free cloud hosting with one click:
 
 ### 🌥️ Zeabur
 
-[![Deploy to Zeabur](https://zeabur.com/button.svg)](https://zeabur.com/templates?repo=https://github.com/SHANKAR-PROJECT/fca-shankar-bot)
+[![Deploy to Zeabur](https://zeabur.com/button.svg)](https://zeabur.com/templates?repo=https://github.com/SHANKAR-SINGHANIYA/SHANKAR-BOT-V1)
 
 ```
 📦 Build: npm install
@@ -100,5 +100,5 @@ If this project helped you, consider starring it on GitHub!
 It keeps the motivation alive 😄
 
 ```
-🌟 git clone https://github.com/SHANKAR-SINGHANIYA/SHANKAR-BOT-1
+🌟 git clone https://github.com/SHANKAR-SINGHANIYA/SHANKAR-BOT-V1
 ```
