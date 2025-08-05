@@ -1,0 +1,103 @@
+# If you want to move down the line, please use \n. e.g: SpermLord\nCatalizcs.
+# After changed, you have to restart the bot to use.
+# Put the # character at the beginning of each sentence if you don't want the code to run those lines. 
+# Thanks to https://www.facebook.com/duong.than.net for translate to English!
+
+# mirai.js 
+
+mirai.errorFormat=Module ka swaroop galat hai!
+mirai.nameExist=Module ka naam doosre module se milta-julta hai!
+mirai.notFoundLanguage=Module %1 aapki bhasha ka samarthan nahi karta
+mirai.notFoundPackage=Module %2 ke liye package %1 nahi mila, sthapit kiya ja raha hai...
+mirai.cantInstallPackage=Module %2 ke liye package %1 sthapit nahi kiya ja saka, truti: %3
+mirai.loadedPackage=Module %1 ke liye poora package safalta se sthapit kiya gaya
+mirai.loadedConfig=Module %1 ke liye sanrachna safalta se sthapit ki gayi
+mirai.cantLoadConfig=Module %1 ki sanrachna sthapit nahi ki ja saki, truti: %2
+mirai.cantOnload=Module %1 ka setup shuru nahi kiya ja saka, truti: %1
+mirai.successLoadModule=Module %1 safalta se sthapit kiya gaya
+mirai.failLoadModule=Module %1 sthapit nahi kiya ja saka, truti: %2
+mirai.finishLoadModule=%1 module adesh aur %2 module ghatnayein safalta se sthapit ki gayin
+mirai.foundPathAppstate=Appstate file mila
+mirai.notFoundPathAppstate=Appstate file nahi mila
+mirai.checkListGban=Vaishvik pratibandh suchi ki jaanch ki ja rahi hai...
+mirai.banDevice=Aapka device miraiproject se pratibandhit hai, adhik jankari ya unban key ke liye kripaya facebook https://fb.me/PhamVanDien.User se sampark karen, yadi aapke paas unban key hai, toh kripaya niche bharen.
+mirai.keyNotSameFormat=Galat swaroop, code mein 6 ank hone chahiye.
+mirai.codeInputExpired=Aapka code galat hai ya samay seema khatam ho chuki hai.
+mirai.unbanDeviceSuccess=Aapka device ab pratibandh mukt hai, istemal ke liye kripaya restart karen.
+mirai.userBanned=Aapko miraiproject se pratibandhit kiya gaya hai jab %1, kaaran: %2. Adhik jankari ke liye kripaya facebook https://fb.me/PhamVanDien.User se sampark karen!
+mirai.finishCheckListGban=Vaishvik pratibandh suchi ki jaanch puri hui
+mirai.handleListenError=handleListene mein kuchh anapekshit truti hui, truti: %1
+mirai.warningSourceCode=SOURCE CODE KI SANRACHNA MEIN PARIVARTAN PAYA GAYA HAI, ABHI RUK JAO!
+mirai.refreshListen=handleListener ko naya kiya gaya...
+mirai.successConnectDatabase=Database se safalta se joda gaya!
+mirai.failConnectDatabase=Database se jodne mein asafal, truti: %1
+
+# includes/listen.js
+
+listen.startLoadEnvironment=Paryavaran chalon ko load karne ki prakriya shuru...
+listen.loadedEnvironmentThread=Samuh paryavaran chalon ko safalta se load kiya gaya
+listen.loadedEnvironmentUser=User paryavaran chalon ko safalta se load kiya gaya
+listen.successLoadEnvironment=Paryavaran chalon ko safalta se load kiya gaya
+listen.failLoadEnvironment=Paryavaran chalon ko load nahi kiya ja saka, truti: %1
+
+# includes/controller/currencies.js
+
+currencies.needObjectOrArray=Array ya Object hona chahiye ya shayad dono
+currencies.needObject=Object hona chahiye
+currencies.needNumber=Sankhya hona chahiye
+
+# includes/controller/threads.js
+
+threads.needObjectOrArray=Array ya Object hona chahiye ya shayad dono
+threads.needObject=Object hona chahiye
+
+# includes/controller/users.js
+
+users.needObjectOrArray=Array ya Object hona chahiye ya shayad dono
+users.needObject=Object hona chahiye
+
+# includes/handle/handleCommand.js
+
+handleCommand.userBanned=Aap bot ka istemal nahi kar sakte!\n%1\n%2
+handleCommand.threadBanned=Aapka samuh bot ka istemal nahi kar sakta!\n%1\n%2
+handleCommand.commandNotExist=Aapne jo adesh istemal kiya woh maujood nahi hai, kya yeh "%1" hai?
+handleCommand.commandThreadBanned=Aapka samuh adesh "%1" ka istemal nahi kar sakta
+handleCommand.commandUserBanned=Aap adesh "%1" ka istemal nahi kar sakte
+handleCommand.threadNotAllowNSFW=Aapka samuh NSFW adeshon ka istemal nahi kar sakta
+handleCommand.cantGetInfoThread=Aapke samuh ki jankari prapt nahi ki ja saki, truti: %1
+handleCommand.permssionNotEnough=Aapke paas adesh "%1" ke liye anumati nahi hai
+handleCommand.cantSetMessageReaction=setMessageReaction mein kuchh anapekshit truti hui, truti: %1
+handleCommand.executeCommand=[ %1 ] Adesh istemal kiya gaya: %2 dwara user: %3 samuh mein: %4 | Args shamil: %5 | Prakriya samay: %6ms
+handleCommand.commandError=Adesh %1 ke istemal ke dauraan kuchh anapekshit truti hui, truti: %2
+
+# includes/handle/handleCommandEvent.js
+
+handleCommandEvent.moduleError=Adesh %1 ke istemal ke dauraan kuchh anapekshit truti hui, truti: %2
+
+# includes/handle/handleCreateDatabase.js
+
+handleCreateDatabase.newThread=naya samuh: %1
+handleCreateDatabase.newUser=naya user: %1
+
+# includes/handle/handleEvent.js
+
+handleEvent.executeEvent=[ %1 ] Ghatna ko execute kiya gaya: %2 samuh mein: %3 | Prakriya samay: %4ms
+handleEvent.eventError=Ghatna %1 ko execute karte samay kuchh truti hui, truti: %12
+
+# includes/handle/handleReaction.js
+
+handleReaction.missingValue=Aapki samasya ke jawab ke liye mulya anupasthit hai
+handleReaction.executeError=Aapki samasya ke jawab ke dauraan kuchh truti hui, truti: %1
+
+# includes/handle/handleReply.js
+
+handleReply.missingValue=Aapki samasya ke jawab ke liye mulya anupasthit hai
+handleReply.executeError=Aapki samasya ke jawab ke dauraan kuchh truti hui, truti: %1
+
+# includes/handle/handleSchedule.js
+
+handleSchedule.exectuteError=Module %1 par niyojan ke dauraan kuchh truti hui, truti: %2
+
+# utils/index.js
+
+utils.throwError=[!] Aap jo adesh istemal kar rahe hain uska syntax sahih nahi hai, kripaya %1help %2 ka istemal karen adhik upyog vivaran ke liye

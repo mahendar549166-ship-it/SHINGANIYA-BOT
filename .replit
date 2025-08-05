@@ -1,0 +1,6 @@
+entrypoint = "index.js"
+
+language = "nodejs"
+
+[nix]
+channel = "stable-24_05"
