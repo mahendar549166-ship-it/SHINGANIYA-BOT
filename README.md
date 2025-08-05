@@ -100,5 +100,5 @@ If this project helped you, consider starring it on GitHub!
 It keeps the motivation alive 😄
 
 ```
-🌟 git clone https://github.com/SHANKAR-SINGHANIYA/SHANKAR-BOT
+🌟 git clone https://github.com/SHANKAR-SINGHANIYA/SHANKAR-BOT-1
 ```
