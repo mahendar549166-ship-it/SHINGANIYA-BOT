@@ -1,105 +1,163 @@
-this.config = {
+const request = require("request");
+const fs = require("fs-extra");
+const path = require("path");
+
+module.exports.config = {
   name: "help",
-  version: "1.1.1",
-  hasPermssion: 0,
-  credits: "𝐒𝐡𝐚𝐧𝐤𝐚𝐫 𝐒𝐢𝐧𝐠𝐡𝐚𝐧𝐢𝐲𝐚👑",
-  description: "Command ki list aur jankari dekhein",
-  commandCategory: "Samuh",
-  usages: "[command naam/sabhi]",
-  cooldowns: 0
-};
-
-this.languages = {
-  "vi": {},
-  "en": {}
-};
-
-this.run = async function ({ api, event, args }) {
-  const {
-    threadID: tid,
-    messageID: mid,
-    senderID: sid
-  } = event;
-  const axios = global.nodemodule['axios'];
-  var type = !args[0] ? "" : args[0].toLowerCase();
-  var msg = "";
-  const cmds = global.client.commands;
-  const TIDdata = global.data.threadData.get(tid) || {};
-  const moment = require("moment-timezone");
-  var thu = moment.tz('Asia/Kolkata').format('dddd');
-  if (thu == 'Sunday') thu = 'Ravivar';
-  if (thu == 'Monday') thu = 'Somvar';
-  if (thu == 'Tuesday') thu = 'Mangalvar';
-  if (thu == 'Wednesday') thu = 'Budhvar';
-  if (thu == 'Thursday') thu = 'Guruvar';
-  if (thu == 'Friday') thu = 'Shukravar';
-  if (thu == 'Saturday') thu = 'Shanivar';
-  const time = moment.tz("Asia/Kolkata").format("HH:mm:s | DD/MM/YYYY");
-  const hours = moment.tz("Asia/Kolkata").format("HH");
-  const admin = config.ADMINBOT;
-  const NameBot = config.BOTNAME;
-  const version = config.version;
-  var prefix = TIDdata.PREFIX || global.config.PREFIX;
-
-  if (type == "sabhi") {
-    const commandsList = Array.from(cmds.values()).map((cmd, index) => {
-      return `${index + 1}. ${cmd.config.name}\n📝 Vivran: ${cmd.config.description}\n\n`;
-    }).join('');
-    return api.sendMessage(commandsList, tid, mid);
+  version: "1.0.3",
+  hasPermission: 0,
+  credits: "SHANKAR",
+  description: "Beginner's Guide",
+  commandCategory: "guide",
+  usePrefix: false,
+  usages: "[Shows Commands]",
+  cooldowns: 5,
+  envConfig: {
+    autoUnsend: true,
+    delayUnsend: 60
   }
+};
 
-  if (type) {
-    const command = Array.from(cmds.values()).find(cmd => cmd.config.name.toLowerCase() === type);
-    if (!command) {
-      const stringSimilarity = require('string-similarity');
-      const commandName = args.shift().toLowerCase() || "";
-      const commandValues = cmds['keys']();
-      const checker = stringSimilarity.findBestMatch(commandName, commandValues);
-      if (checker.bestMatch.rating >= 0.5) command = client.commands.get(checker.bestMatch.target);
-      msg = `⚠️ Command '${type}' system mein nahi mila.\n📌 Sabse nazdeeki command '${checker.bestMatch.target}' mila`;
-      return api.sendMessage(msg, tid, mid);
-    }
-    const cmd = command.config;
-    msg = `[ COMMAND KA ISTEMAAL ]\n\n📜 Command Naam: ${cmd.name}\n🕹️ Version: ${cmd.version}\n🔑 Adhikaar: ${TextPr(cmd.hasPermssion)}\n📝 Vivran: ${cmd.description}\n🏘️ Category: ${cmd.commandCategory}\n📌 Istemaal: ${cmd.usages}\n⏳ Cooldown: ${cmd.cooldowns} second`;
-    return api.sendMessage(msg, tid, mid);
-  } else {
-    const commandsArray = Array.from(cmds.values()).map(cmd => cmd.config);
-    const array = [];
-    commandsArray.forEach(cmd => {
-      const { commandCategory, name: nameModule } = cmd;
-      const find = array.find(i => i.cmdCategory == commandCategory);
-      if (!find) {
-        array.push({
-          cmdCategory: commandCategory,
-          nameModule: [nameModule]
-        });
+module.exports.languages = {
+  en: {
+    moduleInfo:
+      "「 %1 」\n%2\n\n❯ Usage: %3\n❯ Category: %4\n❯ Waiting time: %5 seconds(s)\n❯ Permission: %6\n\n» Module code by %7 ",
+    helpList: `◖There are %1 commands and %2 categories on this bot.`,
+    guideList: `◖Use: "%1help ‹command›" to know how to use that command!\n◖Type: "%1help ‹page_number›" to show that page contents!`,
+    user: "User",
+    adminGroup: "Admin group",
+    adminBot: "Admin bot",
+  },
+};
+
+module.exports.handleEvent = function ({ api, event, getText }) {
+  const { commands } = global.client;
+  const { threadID, messageID, body } = event;
+
+  if (!body || typeof body == "undefined" || body.indexOf("help") != 0)
+    return;
+  const splitBody = body.slice(body.indexOf("help")).trim().split(/\s+/);
+  if (splitBody.length == 1 || !commands.has(splitBody[1].toLowerCase())) return;
+  const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
+  const command = commands.get(splitBody[1].toLowerCase());
+  const prefix = threadSetting.hasOwnProperty("PREFIX")
+    ? threadSetting.PREFIX
+    : global.config.PREFIX;
+  return api.sendMessage(
+    getText(
+      "moduleInfo",
+      command.config.name,
+      command.config.description,
+      `${prefix}${command.config.name} ${command.config.usages || ""}`,
+      command.config.commandCategory,
+      command.config.cooldowns,
+      command.config.hasPermission === 0
+        ? getText("user")
+        : command.config.hasPermission === 1
+        ? getText("adminGroup")
+        : getText("adminBot"),
+      command.config.credits
+    ),
+    threadID,
+    messageID
+  );
+};
+
+module.exports.run = async function ({ api, event, args, getText }) {
+  const { commands } = global.client;
+  const { threadID, messageID } = event;
+  const command = commands.get((args[0] || "").toLowerCase());
+  const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
+  const { autoUnsend, delayUnsend } = global.configModule[this.config.name];
+  const prefix = threadSetting.hasOwnProperty("PREFIX")
+    ? threadSetting.PREFIX
+    : global.config.PREFIX;
+
+  if (!command) {
+    const commandList = Array.from(commands.values());
+    const categories = new Set(commandList.map((cmd) => cmd.config.commandCategory.toLowerCase()));
+    const categoryCount = categories.size;
+
+    const categoryNames = Array.from(categories);
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(categoryNames.length / itemsPerPage);
+
+    let currentPage = 1;
+    if (args[0]) {
+      const parsedPage = parseInt(args[0]);
+      if (!isNaN(parsedPage) && parsedPage >= 1 && parsedPage <= totalPages) {
+        currentPage = parsedPage;
       } else {
-        find.nameModule.push(nameModule);
+        return api.sendMessage(`◖Oops! You went too far! Please choose a page between 1 and ${totalPages}◗`, threadID, messageID);
       }
+    }
+
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const endIdx = startIdx + itemsPerPage;
+    const visibleCategories = categoryNames.slice(startIdx, endIdx);
+
+    let msg = "";
+    const numberFont = ["❶", "❷", "❸", "❹", "❺", "❻", "❼", "❽", "❾", "❿"];
+    for (let i = 0; i < visibleCategories.length; i++) {
+      const category = visibleCategories[i];
+      const categoryCommands = commandList.filter(
+        (cmd) => cmd.config.commandCategory.toLowerCase() === category
+      );
+      const commandNames = categoryCommands.map((cmd) => cmd.config.name);
+      msg += `╭[ ${numberFont[i]} ]─❍ ${
+        category.charAt(0).toUpperCase() + category.slice(1)
+      }\n╰─◗ ${commandNames.join(", ")}\n\n`;
+    }
+
+    const numberFontPage = [
+      "❶","❷","❸","❹","❺","❻","❼","❽","❾","❿",
+      "⓫","⓬","⓭","⓮","⓯","⓰","⓱","⓲","⓳","⓴"
+    ];
+    msg += `╭ ──────── ╮\n│ Page ${numberFontPage[currentPage - 1]} of ${numberFontPage[totalPages - 1]} │\n╰ ──────── ╯\n`;
+    msg += getText("helpList", commands.size, categoryCount, prefix);
+
+    // ✅ Use multiple rotating Imgur images
+    const imgLinks = [
+      "https://i.ibb.co/xt39pMgd/imgbb-upload.jpg",
+      "https://i.ibb.co/TDWsz5pj/imgbb-upload.jpg",
+      "https://i.ibb.co/ymSDqFgL/imgbb-upload.jpg",
+      "https://i.ibb.co/QLSPhZV/imgbb-upload.jpg"
+    ];
+    const chosenImg = imgLinks[Math.floor(Math.random() * imgLinks.length)];
+    const imagePath = path.join(__dirname, "cache", "menu.jpg");
+
+    request(chosenImg).pipe(fs.createWriteStream(imagePath)).on("close", () => {
+      const msgg = {
+        body: `╭──────────────╮\n│𝐒𝐇𝐀𝐍𝐊𝐀𝐑 𝐁𝐎𝐓 𝐌𝐄𝐍𝐔│\n╰──────────────╯\n‣ Bot Owner: SHANKAR-SUMAN\n\n${msg}\n◖Total pages available: ${totalPages}.\n\n╭ ──── ╮\n│ GUIDE │\n╰ ──── ╯\n${getText("guideList", prefix)}`,
+        attachment: fs.createReadStream(imagePath),
+      };
+
+      api.sendMessage(msgg, threadID, async (err, info) => {
+        if (autoUnsend && info) {
+          setTimeout(() => {
+            api.unsendMessage(info.messageID);
+          }, delayUnsend * 1000);
+        }
+      }, messageID);
     });
-    array.sort(S("nameModule"));
-    array.forEach(cmd => {
-      if (cmd.cmdCategory.toUpperCase() === 'ADMIN' && !global.config.ADMINBOT.includes(sid)) return;
-      msg += `[ ${cmd.cmdCategory.toUpperCase()} ]\n📝 Kul commands: ${cmd.nameModule.length} commands\n${cmd.nameModule.join(", ")}\n\n`;
-    });
-    msg += `📝 Kul commands: ${cmds.size} commands\n👤 Admin bot ki sankhya: ${admin.length}\n👾 Bot ka naam: ${NameBot}\n🕹️ Version: ${version}\n⏰ Aaj hai: ${thu}\n⏱️ Samay: ${time}\n${prefix}help + command naam se vivran dekhein\n${prefix}help + sabhi se sabhi commands dekhein`;
-    return api.sendMessage(msg, tid, mid);
+  } else {
+    return api.sendMessage(
+      getText(
+        "moduleInfo",
+        command.config.name,
+        command.config.description,
+        `${prefix}${command.config.name} ${command.config.usages || ""}`,
+        command.config.commandCategory,
+        command.config.cooldowns,
+        command.config.hasPermission === 0
+          ? getText("user")
+          : command.config.hasPermission === 1
+          ? getText("adminGroup")
+          : getText("adminBot"),
+        command.config.credits
+      ),
+      threadID,
+      messageID
+    );
   }
 };
-
-function S(k) {
-  return function (a, b) {
-    let i = 0;
-    if (a[k].length > b[k].length) {
-      i = 1;
-    } else if (a[k].length < b[k].length) {
-      i = -1;
-    }
-    return i * -1;
-  };
-}
-
-function TextPr(permission) {
-  p = permission;
-  return p == 0 ? "Sadasya" : p == 1 ? "Prashasak" : p == 2 ? "Admin Bot" : "Poorn Adhikaar";
-}
