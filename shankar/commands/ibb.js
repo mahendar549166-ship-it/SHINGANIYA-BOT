@@ -1,98 +1,66 @@
-const axios = require("axios");
-const fs = require("fs");
-
-function stringify(obj, t) {
-  let box = [];
-  for (let i in obj) {
-    if (obj.hasOwnProperty(i)) {
-      let a = t ? t + "[" + i + "]" : i;
-      let n = obj[i];
-      let enc = typeof n === 'object' && n !== null ? stringify(n, a) : encodeURIComponent(a) + "=" + encodeURIComponent(n);
-      box.push(enc);
-    }
-  }
-  return box.join("&");
-}
-
-function regAuthToken() {
-  return new Promise((resolve, reject) => {
-    axios({
-      method: 'GET',
-      url: 'https://vi.imgbb.com/',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'
-      }
-    })
-      .then((res) => res.data)
-      .then((res) => {
-        resolve(/\.obj\.config\.auth_token="(\w+)";/g.exec(res)[1]);
-      })
-      .catch(reject);
-  });
-}
-
-function imgbbCreateURL(url) {
-  return new Promise((resolve, reject) => {
-    regAuthToken()
-      .then((token) => {
-        axios({
-          method: "POST",
-          url: "https://imgbb.com/json",
-          headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
-          },
-          data: stringify({
-            source: url,
-            type: "url",
-            action: "upload",
-            timestamp: Date.now(),
-            auth_token: token
-          })
-        })
-          .then((res) => res.data)
-          .then((res) => {
-            resolve(res.image.url);
-          })
-          .catch(reject);
-      })
-      .catch(reject);
-  });
-}
+const axios = require('axios');
+const fs = require('fs-extra');
+const path = require('path');
+const FormData = require('form-data');
 
 module.exports.config = {
-  name: "ibb",
-  version: "1.0.0",
-  hasPermission: 0,
-  description: "Message par imgbb URL prapt karein",
-  credits: "𝐒𝐡𝐚𝐧𝐤𝐚𝐫 𝐒𝐢𝐧𝐠𝐡𝐚𝐧𝐢𝐲𝐚👑",
-  commandCategory: "Upyogita",
-  usages: "[jawab dein]",
-  cooldowns: 5,
-  images: [],
-  usePrefix: false,
+    name: 'imgbb',
+    version: '2.0.0',
+    hasPermssion: 0,
+    credits: 'Shankar',
+    description: 'Upload image/GIF/video to IMGBB',
+    usePrefix: false,
+    commandCategory: 'Tools',
+    usages: 'Reply to an image, gif or short video',
+    cooldowns: 2,
 };
 
-module.exports.run = async ({ api, event }) => {
-  const { type, messageReply, threadID } = event;
-  let msg = "";
-
-  try {
-    if (type === "message_reply") {
-      if (messageReply.attachments.length < 1) {
-        msg += "Kripaya sirf tasveer ka jawab dein";
-      } else {
-        for (let obj of messageReply.attachments) {
-          var imgbbURL = (obj.type === "photo" || obj.type === "animated_image") ? await imgbbCreateURL(obj.url) : "[Function: imgbbError]";
-          msg += `"${imgbbURL}",\n`;
+module.exports.run = async function({ api, event }) {
+    try {
+        if (event.type !== "message_reply") {
+            return api.sendMessage("⚠️ | Reply to an image, gif or short video!", event.threadID, event.messageID);
         }
-      }
-    } else {
-      msg += "Kripaya tasveer ka jawab dein";
-    }
 
-    await api.sendMessage(msg, event.threadID, event.messageID);
-  } catch (e) {
-    console.log(e);
-    await api.sendMessage(`Ek error hua hai\n${e}`, threadID);
-  }
+        const attachment = event.messageReply.attachments?.[0];
+        if (!attachment) {
+            return api.sendMessage("❌ | No attachment found in replied message.", event.threadID, event.messageID);
+        }
+
+        const supportedTypes = ['photo', 'animated_image', 'video'];
+        if (!supportedTypes.includes(attachment.type)) {
+            return api.sendMessage("❌ | Only image, GIF or video supported.", event.threadID, event.messageID);
+        }
+
+        const fileUrl = attachment.url;
+        const ext = attachment.type === 'photo' ? 'png' :
+                    attachment.type === 'animated_image' ? 'gif' :
+                    attachment.type === 'video' ? 'mp4' : 'bin';
+
+        const fileName = `upload_file.${ext}`;
+        const filePath = path.join(__dirname, 'cache', fileName);
+
+        const fileData = await axios.get(fileUrl, { responseType: 'arraybuffer' });
+        fs.writeFileSync(filePath, fileData.data);
+
+        const form = new FormData();
+        form.append('image', fs.createReadStream(filePath));
+        form.append('key', 'dae214c4ddd291514cae941e32ef8b71');
+
+        const upload = await axios.post('https://api.imgbb.com/1/upload', form, {
+            headers: form.getHeaders()
+        });
+
+        fs.unlinkSync(filePath);
+
+        if (upload.data.success) {
+            const uploadedUrl = upload.data.data.url;
+            return api.sendMessage(`✅ Upload successful:\n${uploadedUrl}`, event.threadID, event.messageID);
+        } else {
+            return api.sendMessage("❌ Upload failed. Try again.", event.threadID, event.messageID);
+        }
+
+    } catch (err) {
+        console.error("Upload Error:", err.message);
+        return api.sendMessage("❌ Error occurred during upload. GIFs or videos may be unsupported or too large.", event.threadID, event.messageID);
+    }
 };
